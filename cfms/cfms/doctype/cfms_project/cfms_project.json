@@ -1,0 +1,157 @@
+{
+ "actions": [],
+ "autoname": "cfms_prj_project_name",
+ "creation": "2025-10-21 11:50:48.946674",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "cfms_prj_secbrk_001",
+  "cfms_prj_project_name",
+  "title",
+  "cfms_prj_project_customer",
+  "cfms_prj_invoice_customer",
+  "cfms_prj_revenue_stream",
+  "cfms_prj_product",
+  "cfms_prj_status",
+  "cfms_prj_start_date",
+  "cfms_prj_end_date",
+  "cfms_prj_is_paid",
+  "cfms_prj_secbrk_002",
+  "cfms_prj_recognition_method",
+  "cfms_prj_net_terms_days",
+  "cfms_prj_total_estimated_revenues"
+ ],
+ "fields": [
+  {
+   "fieldname": "cfms_prj_secbrk_001",
+   "fieldtype": "Section Break"
+  },
+  {
+   "bold": 1,
+   "description": "Name of project; different from ERPNext core project module.",
+   "fieldname": "cfms_prj_project_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Project Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "description": "End Client for whom project is done. Company might be contracting through another party - so may not be contracting counterparty.",
+   "fieldname": "cfms_prj_project_customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Project Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "description": "Entity to invoice for the project. Could be different from that of the End Customer, or could be a different entity of the same group.",
+   "fieldname": "cfms_prj_invoice_customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Invoice Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cfms_prj_revenue_stream",
+   "fieldtype": "Select",
+   "label": "Revenue Stream",
+   "options": "Mobile Screening\nOn-site Screening\nSoftware Licensing\nSaaS\nDevice Rental\nDevice Sales\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cfms_prj_product",
+   "fieldtype": "Link",
+   "label": "Product",
+   "options": "Item"
+  },
+  {
+   "fieldname": "cfms_prj_status",
+   "fieldtype": "Select",
+   "label": "Project Status",
+   "options": "Presales\nActive\nComplete\nTerminated",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cfms_prj_start_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cfms_prj_end_date",
+   "fieldtype": "Date",
+   "label": "End Date"
+  },
+  {
+   "fieldname": "cfms_prj_is_paid",
+   "fieldtype": "Select",
+   "label": "Paid",
+   "options": "Yes\nNo",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cfms_prj_secbrk_002",
+   "fieldtype": "Section Break",
+   "label": "Revenue Information"
+  },
+  {
+   "fieldname": "cfms_prj_recognition_method",
+   "fieldtype": "Select",
+   "label": "Revenue Recognition",
+   "options": "Month End\nInvoice Date\nAd hoc"
+  },
+  {
+   "default": "90",
+   "fieldname": "cfms_prj_net_terms_days",
+   "fieldtype": "Int",
+   "label": "Net Terms (Days)"
+  },
+  {
+   "fieldname": "cfms_prj_total_estimated_revenues",
+   "fieldtype": "Currency",
+   "label": "Total Estimated Revenue"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "in_list_view": 1,
+   "label": "TItle",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2025-10-25 14:03:59.559345",
+ "modified_by": "Administrator",
+ "module": "CFMS",
+ "name": "CFMS Project",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "CFMS Accountant",
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title",
+ "track_changes": 1,
+ "track_seen": 1
+}

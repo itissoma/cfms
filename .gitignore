@@ -1,7 +1,56 @@
-.DS_Store
+# Python
 *.pyc
-*.egg-info
+*.pyo
+__pycache__/
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.Python
+
+# Frappe/ERPNext
+*.compiled
 *.swp
-tags
-node_modules
-__pycache__
+*~
+.DS_Store
+node_modules/
+.venv/
+venv/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-*
+
+# Logs
+*.log
+logs/
+
+# Database backups
+*.sql
+*.db
+*.sqlite
+
+# Temporary files
+.tmp/
+tmp/
+temp/
+
+# Site-specific (DO NOT commit these)
+sites/
+# Exception: we DO want to track our custom app
+!sites/apps.txt
+
+# Build artifacts
+*.css.map
+*.js.map
+
+# OS
+Thumbs.db
+.directory
+
+# Personal notes
+notes.txt
+TODO.md

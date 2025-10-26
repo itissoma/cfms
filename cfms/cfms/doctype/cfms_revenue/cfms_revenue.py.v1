@@ -1,0 +1,45 @@
+# Copyright (c) 2025, ETGroup
+# For license information, please see license.txt
+
+import frappe
+from frappe.model.document import Document
+from frappe.utils import getdate
+from frappe.model.naming import make_autoname
+
+
+class CFMSRevenue(Document):
+	def autoname(self):
+		"""Generate short human-readable name: REV-YYMM-XXX-####"""
+		if self.cfms_rev_work_period_month and self.cfms_rev_revenue_source:
+			# Extract YY-MM from date (short format)
+			date_obj = getdate(self.cfms_rev_work_period_month)
+			month_str = date_obj.strftime('%y%m')  # 2510 for Oct 2025
+			
+			# Map revenue source to 3-letter abbreviation
+			source_map = {
+				'Project': 'PRJ',
+				'Financial': 'FIN',
+				'Other': 'OTH'
+			}
+			rev_abbr = source_map.get(self.cfms_rev_revenue_source, 'OTH')
+			
+			# Set name with auto counter (4 digits to match expense length)
+			self.name = make_autoname(f"REV-{month_str}-{rev_abbr}-.####")
+	
+	def before_save(self):
+		"""Set title - only for old records to make them readable"""
+		# Check if this is an old ugly ID (not starting with REV-)
+		if self.name and not self.name.startswith('REV-') and not self.name.startswith('new-'):
+			# Old record - set descriptive title
+			if self.cfms_rev_work_period_month and self.cfms_rev_revenue_source:
+				date_obj = getdate(self.cfms_rev_work_period_month)
+				month_str = date_obj.strftime('%y%m')  # Short format
+				source_map = {
+					'Project': 'PRJ',
+					'Financial': 'FIN',
+					'Other': 'OTH'
+				}
+				rev_abbr = source_map.get(self.cfms_rev_revenue_source, 'OTH')
+				amt = self.cfms_rev_amount or 0
+				self.title = f"{month_str}-{rev_abbr}-{amt:,.0f}"
+		# For new records, title will be auto-set to name by Frappe

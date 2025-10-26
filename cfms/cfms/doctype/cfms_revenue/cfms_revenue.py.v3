@@ -1,0 +1,59 @@
+# Copyright (c) 2025, ETGroup
+# For license information, please see license.txt
+
+import frappe
+from frappe.model.document import Document
+from frappe.utils import getdate
+from frappe.model.naming import make_autoname
+
+
+class CFMSRevenue(Document):
+	def validate(self):
+		"""Validate conditional required fields"""
+		# If Revenue Source is Project, then customers are required
+		if self.cfms_rev_revenue_source == 'Project':
+			if not self.cfms_rev_project_customer:
+				frappe.throw('Project Customer is required for Project revenue')
+			if not self.cfms_rev_invoice_customer:
+				frappe.throw('Invoice Customer is required for Project revenue')
+	
+	def autoname(self):
+		"""Generate short human-readable name: REV-YYMM-XXX-####"""
+		if self.cfms_rev_work_period_month and self.cfms_rev_revenue_source:
+			# Extract YY-MM from date (short format)
+			date_obj = getdate(self.cfms_rev_work_period_month)
+			month_str = date_obj.strftime('%y%m')
+			
+			# Map revenue source to 3-letter abbreviation
+			source_map = {
+				'Project': 'PRJ',
+				'Financial': 'FIN',
+				'Other': 'OTH'
+			}
+			rev_abbr = source_map.get(self.cfms_rev_revenue_source, 'OTH')
+			
+			# Set name with auto counter (4 digits to match expense)
+			self.name = make_autoname(f"REV-{month_str}-{rev_abbr}-.####")
+	
+	def before_save(self):
+		"""Set title for display"""
+		if self.name:
+			# For new records with proper naming (starting with REV-)
+			if self.name.startswith('REV-'):
+				# Title = Name for new records (simple and clean)
+				self.title = self.name
+			
+			# For old records with ugly IDs (not starting with REV-)
+			elif not self.name.startswith('new-'):
+				# Generate descriptive title for old records
+				if self.cfms_rev_work_period_month and self.cfms_rev_revenue_source:
+					date_obj = getdate(self.cfms_rev_work_period_month)
+					month_str = date_obj.strftime('%y%m')
+					source_map = {
+						'Project': 'PRJ',
+						'Financial': 'FIN',
+						'Other': 'OTH'
+					}
+					rev_abbr = source_map.get(self.cfms_rev_revenue_source, 'OTH')
+					amt = self.cfms_rev_amount or 0
+					self.title = f"{month_str}-{rev_abbr}-{amt:,.0f}"

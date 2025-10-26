@@ -1,0 +1,63 @@
+# Copyright (c) 2025, ETGroup
+# For license information, please see license.txt
+
+import frappe
+from frappe.model.document import Document
+from frappe.utils import getdate
+from frappe.model.naming import make_autoname
+
+
+class CFMSExpense(Document):
+	def validate(self):
+		"""Validate conditional required fields"""
+		# If Expense Type is Project, then Project Name is required
+		if self.cfms_exp_expense_type == 'Project':
+			if not self.cfms_exp_project_name:
+				frappe.throw('Project Name is required for Project expenses')
+		
+		# Amount must not be zero (NEW - Step 1.2)
+		if self.cfms_exp_amount == 0:
+			frappe.throw('Expense Amount cannot be zero. Please enter a non-zero amount.')
+
+	def autoname(self):
+		"""Generate short human-readable name: EXP-YYMM-XXX-####"""
+		if self.cfms_exp_month_incurred and self.cfms_exp_expense_type:
+			# Extract YY-MM from date (short format)
+			date_obj = getdate(self.cfms_exp_month_incurred)
+			month_str = date_obj.strftime('%y%m')
+
+			# Map expense type to 3-letter abbreviation
+			type_map = {
+				'Project': 'PRJ',
+				'Overhead': 'OVH',
+				'Financial': 'FIN',
+				'Other': 'OTH'
+			}
+			exp_abbr = type_map.get(self.cfms_exp_expense_type, 'OTH')
+
+			# Set name with auto counter
+			self.name = make_autoname(f"EXP-{month_str}-{exp_abbr}-.####")
+
+	def before_save(self):
+		"""Set title for display"""
+		if self.name:
+			# For new records with proper naming (starting with EXP-)
+			if self.name.startswith('EXP-'):
+				# Title = Name for new records (simple and clean)
+				self.title = self.name
+
+			# For old records with ugly IDs (not starting with EXP-)
+			elif not self.name.startswith('new-'):
+				# Generate descriptive title for old records
+				if self.cfms_exp_month_incurred and self.cfms_exp_expense_type:
+					date_obj = getdate(self.cfms_exp_month_incurred)
+					month_str = date_obj.strftime('%y%m')
+					type_map = {
+						'Project': 'PRJ',
+						'Overhead': 'OVH',
+						'Financial': 'FIN',
+						'Other': 'OTH'
+					}
+					exp_abbr = type_map.get(self.cfms_exp_expense_type, 'OTH')
+					amt = self.cfms_exp_amount or 0
+					self.title = f"{month_str}-{exp_abbr}-{amt:,.0f}"

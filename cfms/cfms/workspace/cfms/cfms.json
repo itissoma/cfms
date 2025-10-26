@@ -1,0 +1,100 @@
+{
+ "charts": [],
+ "content": "[]",
+ "creation": "2025-10-21 18:35:42.401155",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "color-rank",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "CFMS",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "CFMS Projects",
+   "link_count": 0,
+   "link_to": "CFMS Project",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "CFMS Expenses",
+   "link_count": 0,
+   "link_to": "CFMS Expense",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "CFMS Revenues",
+   "link_count": 0,
+   "link_to": "CFMS Revenue",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2025-10-22 08:50:02.635102",
+ "modified_by": "Administrator",
+ "module": "CFMS",
+ "name": "CFMS",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "CFMS Accountant"
+  },
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Administrator"
+  },
+  {
+   "role": "All"
+  }
+ ],
+ "sequence_id": 1.0,
+ "shortcuts": [
+  {
+   "doc_view": "List",
+   "label": "CFMS Projects",
+   "link_to": "CFMS Project",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "CFMS Expenses",
+   "link_to": "CFMS Expense",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "CFMS Revenues",
+   "link_to": "CFMS Revenue",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Monthly Cash Flow Summary",
+   "link_to": "Monthly Cash Flow Summary",
+   "report_ref_doctype": "CFMS Revenue",
+   "type": "Report",
+   "url": "https://chs-stg.cfms.hub.etadvisory.com/app/query-report/Monthly%20Cash%20Flow%20Summary?from_date=2025-01-01&to_date=2025-12-31"
+  }
+ ],
+ "title": "CFMS"
+}
