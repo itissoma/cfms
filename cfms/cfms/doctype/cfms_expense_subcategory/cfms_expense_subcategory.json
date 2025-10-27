@@ -1,0 +1,50 @@
+Exporting Document DocType CFMS Expense Subcategory
+Wrote document file for DocType CFMS Expense Subcategory at /home/frappe/frappe-bench/apps/cfms/cfms/cfms/doctype/cfms_expense_subcategory/cfms_expense_subcategory.json
+e",
+  "cfms_expsubcat_description",
+  "cfms_expsubcat_expense_account_override"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_cm1t",
+   "fieldtype": "Section Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "cfms_expsubcat_subcategory_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Subcategory Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cfms_expsubcat_description",
+   "fieldtype": "Small Text",
+   "in_standard_filter": 1,
+   "label": "Description"
+  },
+  {
+   "description": "Leave blank to user category default",
+   "fieldname": "cfms_expsubcat_expense_account_override",
+   "fieldtype": "Link",
+   "label": "Expense Account (Override)",
+   "options": "Account"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-10-27 08:29:40.795947",
+ "modified_by": "Administrator",
+ "module": "CFMS",
+ "name": "CFMS Expense Subcategory",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

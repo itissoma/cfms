@@ -1,0 +1,135 @@
+Exporting Document DocType CFMS Expense Category
+Wrote document file for DocType CFMS Expense Category at /home/frappe/frappe-bench/apps/cfms/cfms/cfms/doctype/cfms_expense_category/cfms_expense_category.json
+otg",
+  "cfms_expcat_category_name",
+  "cfms_expcat_description",
+  "cfms_expcat_section_dimentions",
+  "cfms_expcat_default_department",
+  "cfms_expcat_default_location",
+  "cfms_expcat_default_cost_center",
+  "cfms_expcat_section_accounting",
+  "cfms_expcat_default_expense_account",
+  "cfms_expcat_section_subcategories",
+  "cfms_expcat_subcategories",
+  "cfms_expcat_section_settings",
+  "cfms_expcat_is_active"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_lotg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "cfms_expcat_category_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Category Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "description": "Default values for expenses in this category (can be overridden)",
+   "fieldname": "cfms_expcat_description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "description": "Default values for expenses in this category (can be overridden)",
+   "fieldname": "cfms_expcat_section_dimentions",
+   "fieldtype": "Section Break",
+   "label": "Default Cost Allocation"
+  },
+  {
+   "fieldname": "cfms_expcat_default_department",
+   "fieldtype": "Link",
+   "label": "Default Department",
+   "options": "Department"
+  },
+  {
+   "fieldname": "cfms_expcat_default_location",
+   "fieldtype": "Link",
+   "label": "Default Location",
+   "options": "Location"
+  },
+  {
+   "fieldname": "cfms_expcat_default_cost_center",
+   "fieldtype": "Link",
+   "label": "Default Cost Center",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "cfms_expcat_section_accounting",
+   "fieldtype": "Section Break",
+   "label": "Accounting Settings"
+  },
+  {
+   "description": "GL Account for expenses in this category",
+   "fieldname": "cfms_expcat_default_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Expense Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "cfms_expcat_section_subcategories",
+   "fieldtype": "Section Break",
+   "label": "Subcategoris"
+  },
+  {
+   "description": "Add subcategories for more detailed expense tracking",
+   "fieldname": "cfms_expcat_subcategories",
+   "fieldtype": "Table",
+   "label": "Subcategories",
+   "options": "CFMS Expense Subcategory"
+  },
+  {
+   "fieldname": "cfms_expcat_section_settings",
+   "fieldtype": "Section Break",
+   "label": "Settings"
+  },
+  {
+   "default": "1",
+   "fieldname": "cfms_expcat_is_active",
+   "fieldtype": "Check",
+   "label": "Active"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-10-27 08:42:04.958627",
+ "modified_by": "Administrator",
+ "module": "CFMS",
+ "name": "CFMS Expense Category",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "CFMS Accountant",
+   "share": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
