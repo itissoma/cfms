@@ -1,0 +1,6 @@
+# Ignore everything in sandbox
+*
+
+# Except these files
+!.gitignore
+!README.md
