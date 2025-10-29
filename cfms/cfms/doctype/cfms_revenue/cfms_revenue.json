@@ -18,6 +18,11 @@
   "cfms_rev_client_acceptance_date",
   "cfms_rev_invoice_date",
   "cfms_rev_net_terms_days",
+  "cfms_rev_section_dimensions",
+  "cfms_rev_department",
+  "cfms_rev_location",
+  "cfms_rev_cost_center",
+  "cfms_rev_product_line",
   "cfms_rev_secbrk_003",
   "cfms_rev_receipt_date_expected",
   "cfms_rev_receipt_date_actual",
@@ -169,10 +174,43 @@
    "fieldtype": "Data",
    "label": "Project Title",
    "read_only": 1
+  },
+  {
+   "description": "Dimensions for profit allocation and reporting",
+   "fieldname": "cfms_rev_section_dimensions",
+   "fieldtype": "Section Break",
+   "label": "Profit Allocation Dimensions"
+  },
+  {
+   "fieldname": "cfms_rev_department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "link_filters": "[[\"Department\", \"name\", \"in\", [\"Administration - CHSPL\", \"Research & Development\", \"Operations\", \"Sales\"]]]",
+   "options": "Department"
+  },
+  {
+   "fieldname": "cfms_rev_location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location"
+  },
+  {
+   "fieldname": "cfms_rev_cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "link_filters": "[[\"Cost Center\", \"name\", \"in\", [\"Commercial - CHSPL\", \"Non-Commercial - CHSPL\", \"Overhead - CHSPL\"]]]",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "cfms_rev_product_line",
+   "fieldtype": "Link",
+   "label": "Product Line",
+   "link_filters": "[[\"Item Group\", \"parent_item_group\", \"=\", \"CFMS Product Line\"]]",
+   "options": "Item Group"
   }
  ],
  "links": [],
- "modified": "2025-10-26 10:59:25.798268",
+ "modified": "2025-10-29 11:04:51.752819",
  "modified_by": "Administrator",
  "module": "CFMS",
  "name": "CFMS Revenue",
