@@ -27,6 +27,13 @@ app_license = "mit"
 # include js, css files in header of desk.html
 # app_include_css = "/assets/cfms/css/cfms.css"
 # app_include_js = "/assets/cfms/js/cfms.js"
+app_include_js = [
+    "/assets/cfms/js/cfms_kiosk_mode.js"
+]
+
+app_include_css = [
+    "/assets/cfms/css/cfms_sidebar_cleanup.css"
+]
 
 # include js, css files in header of web template
 # web_include_css = "/assets/cfms/css/cfms.css"

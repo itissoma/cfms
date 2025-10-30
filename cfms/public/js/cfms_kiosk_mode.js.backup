@@ -1,0 +1,163 @@
+/**
+ * CFMS Kiosk Mode - Navigation Lock (FINAL VERSION)
+ * ==================================
+ * 
+ * This script implements "chroot" mode for CFMS:
+ * - Hides ERPNext logo/navigation for non-admin users
+ * - Keeps users within CFMS dashboard ecosystem
+ * - Prevents accidental navigation to ERPNext Desk
+ * 
+ * Only System Managers can see full ERPNext interface
+ * 
+ * FIXED: Prevents duplicate initialization
+ */
+
+(function() {
+    'use strict';
+    
+    // Flag to prevent duplicate initialization
+    let kioskModeInitialized = false;
+    
+    // Wait for Frappe to be fully loaded
+    function initCFMSKioskMode() {
+        // Prevent duplicate initialization
+        if (kioskModeInitialized) {
+            console.log('CFMS Kiosk Mode: Already initialized, skipping');
+            return;
+        }
+        
+        // Mark as initialized
+        kioskModeInitialized = true;
+        
+        // Check if user is a System Manager (admin)
+        const isSystemManager = frappe.user_roles && frappe.user_roles.includes('System Manager');
+        
+        if (!isSystemManager) {
+            console.log('CFMS Kiosk Mode: Activated for non-admin user');
+            
+            // Apply all kiosk mode restrictions
+            hideERPNextNavigation();
+            addCFMSBranding();
+            preventDeskAccess();
+            monitorRouteChanges();
+        } else {
+            console.log('CFMS Kiosk Mode: Skipped for System Manager');
+        }
+    }
+    
+    function hideERPNextNavigation() {
+        // Add CSS to hide navigation elements
+        const style = document.createElement('style');
+        style.id = 'cfms-kiosk-mode-style';
+        style.textContent = `
+            /* Hide ERPNext logo and home link for non-admin users */
+            .navbar-brand,
+            .navbar-home {
+                display: none !important;
+            }
+            
+            /* Hide the sidebar toggle */
+            .toggle-sidebar {
+                display: none !important;
+            }
+            
+            /* Hide the awesome bar (global search) - optional */
+            .awesomplete {
+                /* display: none !important; */
+            }
+        `;
+        document.head.appendChild(style);
+        console.log('CFMS Kiosk Mode: Navigation hidden');
+    }
+    
+    function addCFMSBranding() {
+        // Check if already added
+        if (document.querySelector('.cfms-brand')) {
+            console.log('CFMS Kiosk Mode: Branding already added, skipping');
+            return;
+        }
+        
+        // Wait a bit for navbar to load, then add CFMS branding
+        setTimeout(function() {
+            // Double-check it wasn't added while we were waiting
+            if (document.querySelector('.cfms-brand')) {
+                return;
+            }
+            
+            const navbar = document.querySelector('.navbar');
+            if (navbar) {
+                // Create CFMS logo element
+                const cfmsLogo = document.createElement('a');
+                cfmsLogo.href = '/cfms-dashboard';
+                cfmsLogo.className = 'navbar-brand cfms-brand';
+                cfmsLogo.style.cssText = 'display: flex !important; align-items: center; padding: 0 15px;';
+                cfmsLogo.innerHTML = `
+                    <span style="color: #10b981; font-weight: bold; font-size: 18px;">
+                        💰 CFMS
+                    </span>
+                `;
+                
+                // Insert at beginning of navbar
+                const navbarContent = navbar.querySelector('.container, .navbar-content');
+                if (navbarContent) {
+                    navbarContent.insertBefore(cfmsLogo, navbarContent.firstChild);
+                    console.log('CFMS Kiosk Mode: CFMS branding added');
+                }
+            }
+        }, 500);
+    }
+    
+    function preventDeskAccess() {
+        // If user tries to go to /app (Desk home), redirect to CFMS dashboard
+        const currentPath = window.location.pathname;
+        if (currentPath === '/app' || currentPath === '/app/' || currentPath === '/desk') {
+            console.log('CFMS Kiosk Mode: Redirecting from Desk to CFMS Dashboard');
+            window.location.href = '/cfms-dashboard';
+        }
+    }
+    
+    function monitorRouteChanges() {
+        // Monitor Frappe route changes
+        frappe.router.on('change', function() {
+            const isSystemManager = frappe.user_roles && frappe.user_roles.includes('System Manager');
+            
+            if (!isSystemManager) {
+                const currentRoute = frappe.get_route();
+                
+                // Define allowed routes for CFMS users
+                const allowedRoutes = [
+                    'cfms-dashboard',
+                    'Form', // Allow all forms (will be filtered by permissions)
+                    'List', // Allow all lists (will be filtered by permissions)
+                    'print', // Allow printing
+                    'query-report' // Allow reports
+                ];
+                
+                // Check if current route starts with an allowed pattern
+                const isAllowed = allowedRoutes.some(function(allowedRoute) {
+                    return currentRoute[0] === allowedRoute;
+                });
+                
+                // Special check: Allow CFMS-related routes
+                const isCFMSRoute = currentRoute.some(function(part) {
+                    return part && part.toString().toLowerCase().includes('cfms');
+                });
+                
+                // If not allowed and not CFMS-related, redirect
+                if (!isAllowed && !isCFMSRoute && currentRoute[0] !== 'cfms-dashboard') {
+                    console.log('CFMS Kiosk Mode: Blocked navigation to', currentRoute);
+                    frappe.set_route('cfms-dashboard');
+                }
+            }
+        });
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCFMSKioskMode);
+    } else {
+        // DOM already loaded, initialize now
+        initCFMSKioskMode();
+    }
+    
+})();

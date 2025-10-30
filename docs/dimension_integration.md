@@ -153,20 +153,40 @@ Priority Order:
 
 ---
 
-### Phase 5: Revenue Dimensions *(Pending)*
+### Phase 5: Revenue Dimensions ✅
 
-**To Be Added to CFMS Revenue:**
+**Added Fields to CFMS Revenue:**
 ```
-cfms_rev_section_dimensions    (Section Break)
-cfms_rev_department           (Link → Department)
-cfms_rev_location             (Link → Location)
-cfms_rev_cost_center          (Link → Cost Center)
-cfms_rev_product_line         (Link → Item Group)
+cfms_rev_section_dimensions    (Section Break - Row 15 - "Profit Allocation Dimensions")
+cfms_rev_department           (Link → Department - Row 16)
+cfms_rev_location             (Link → Location - Row 17)
+cfms_rev_cost_center          (Link → Cost Center - Row 18)
+cfms_rev_product_line         (Link → Item Group - Row 19)
 ```
+
+**Same Link Filters as Project/Expense** (see Phase 3)
 
 **Auto-Population Logic:**
-- Project Revenue → Fetch from Project master
-- User override always respected
+```python
+def populate_dimensions_from_project():
+    # Only for Project revenue
+    # Fetches from Project master (cfms_prj_* fields)
+    # Only if dimension field is empty (user can override)
+```
+
+**Implementation:**
+- Simpler than Expense (only 1 source: Project master)
+- No category defaults (Revenue has no categories)
+- ~60 lines of code vs ~140 for Expense
+- Same error handling pattern
+
+**Files:**
+- `cfms/cfms/doctype/cfms_revenue/cfms_revenue.json`
+- `cfms/cfms/doctype/cfms_revenue/cfms_revenue.py`
+
+**Section Naming:**
+- Used "Profit Allocation Dimensions" (vs "Cost Allocation" for expenses)
+- More appropriate terminology for revenue context
 
 ---
 
@@ -342,6 +362,53 @@ def populate_dimensions_from_category(self):
 **Expected:**
 - Department remains: Sales ✅
 - Not overridden by category default
+
+---
+
+### Test 4: Revenue Dimension Population ✅
+
+**Setup:**
+- Project has dimensions: Operations, Commercial, Choco
+
+**Steps:**
+1. Create new revenue
+2. Revenue Source: Project
+3. Project Name: (select project)
+4. Work Period Month: Current month
+5. Amount: 50,000
+6. Save
+
+**Expected:**
+- Department: Operations ✅
+- Cost Center: Commercial - CHSPL ✅
+- Product Line: Choco ✅
+
+---
+
+### Test 5: Revenue User Override ✅
+
+**Steps:**
+1. Create new revenue
+2. **Manually set** Department: Sales
+3. Select Project with different department
+4. Save
+
+**Expected:**
+- Department remains: Sales ✅
+- Not overridden by project default
+
+---
+
+### Test 6: Non-Project Revenue ✅
+
+**Steps:**
+1. Create new revenue
+2. Revenue Source: Financial (not Project)
+3. Save
+
+**Expected:**
+- Dimensions remain blank ✅
+- No auto-population (expected behavior)
 
 ---
 
@@ -534,7 +601,7 @@ print(result)
 | 0.83.2 | 2025-10-28 | ET Group | Phase 2: Category dimensions + defaults |
 | 0.83.3 | 2025-10-28 | ET Group | Phase 3: Project dimensions + Link Filters |
 | 0.83.4 | 2025-10-28 | ET Group | Phase 4: Expense dimensions + auto-population |
-| 0.83.5 | TBD | ET Group | Phase 5: Revenue dimensions (pending) |
+| 0.83.5 | 2025-10-28 | ET Group | Phase 5: Revenue dimensions + auto-population ✅ COMPLETE |
 
 ---
 
@@ -560,5 +627,5 @@ For questions or issues:
 
 **Author:** ET Group  
 **Version:** CFMS v0.83  
-**Date:** October 2025  
-**Status:** Phase 4 Complete ✅ | Phase 5 Pending
+**Date:** October 28, 2025  
+**Status:** ✅ ALL PHASES COMPLETE (Phases 1-5)

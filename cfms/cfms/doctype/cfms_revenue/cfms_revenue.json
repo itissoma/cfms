@@ -1,12 +1,13 @@
 {
  "actions": [],
- "creation": "2025-10-21 11:50:49.260285",
+ "creation": "2025-10-29 14:23:04.110820",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "cfms_rev_secbrk_001",
   "cfms_rev_work_period_month",
   "cfms_rev_revenue_source",
+  "col_break_rev_1",
   "cfms_rev_project_name",
   "cfms_rev_project_title",
   "cfms_rev_project_customer",
@@ -14,15 +15,11 @@
   "cfms_rev_amount",
   "cfms_rev_currency",
   "cfms_rev_secbrk_002",
+  "col_break_rev_2",
   "cfms_rev_recognition_method",
   "cfms_rev_client_acceptance_date",
   "cfms_rev_invoice_date",
   "cfms_rev_net_terms_days",
-  "cfms_rev_section_dimensions",
-  "cfms_rev_department",
-  "cfms_rev_location",
-  "cfms_rev_cost_center",
-  "cfms_rev_product_line",
   "cfms_rev_secbrk_003",
   "cfms_rev_receipt_date_expected",
   "cfms_rev_receipt_date_actual",
@@ -45,6 +42,10 @@
    "reqd": 1
   },
   {
+   "fieldname": "col_break_rev_1",
+   "fieldtype": "Column Break"
+  },
+  {
    "description": "What is the kind of revenue?",
    "fieldname": "cfms_rev_revenue_source",
    "fieldtype": "Select",
@@ -60,6 +61,15 @@
    "fieldtype": "Link",
    "label": "Project Name",
    "options": "CFMS Project"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fetch_from": "cfms_rev_project_name.title",
+   "fetch_if_empty": 1,
+   "fieldname": "cfms_rev_project_title",
+   "fieldtype": "Data",
+   "label": "Project Title",
+   "read_only": 1
   },
   {
    "allow_in_quick_entry": 1,
@@ -91,6 +101,10 @@
    "reqd": 1
   },
   {
+   "fieldname": "col_break_rev_2",
+   "fieldtype": "Column Break"
+  },
+  {
    "description": "Currency of revenue",
    "fieldname": "cfms_rev_currency",
    "fieldtype": "Link",
@@ -98,6 +112,7 @@
    "options": "Currency"
   },
   {
+   "collapsible": 1,
    "description": "Section Header",
    "fieldname": "cfms_rev_secbrk_002",
    "fieldtype": "Section Break",
@@ -129,6 +144,7 @@
    "label": "Net Terms (Days)*****"
   },
   {
+   "collapsible": 1,
    "description": "Section Break",
    "fieldname": "cfms_rev_secbrk_003",
    "fieldtype": "Section Break",
@@ -155,6 +171,7 @@
    "options": "Uninvoiced\nInvoiced\nPaid\nOverdue"
   },
   {
+   "collapsible": 1,
    "description": "Section Break",
    "fieldname": "cfms_rev_secbrk_004",
    "fieldtype": "Section Break",
@@ -165,52 +182,10 @@
    "fieldname": "cfms_rev_notes",
    "fieldtype": "Long Text",
    "label": "Notes"
-  },
-  {
-   "allow_in_quick_entry": 1,
-   "fetch_from": "cfms_rev_project_name.title",
-   "fetch_if_empty": 1,
-   "fieldname": "cfms_rev_project_title",
-   "fieldtype": "Data",
-   "label": "Project Title",
-   "read_only": 1
-  },
-  {
-   "description": "Dimensions for profit allocation and reporting",
-   "fieldname": "cfms_rev_section_dimensions",
-   "fieldtype": "Section Break",
-   "label": "Profit Allocation Dimensions"
-  },
-  {
-   "fieldname": "cfms_rev_department",
-   "fieldtype": "Link",
-   "label": "Department",
-   "link_filters": "[[\"Department\", \"name\", \"in\", [\"Administration - CHSPL\", \"Research & Development\", \"Operations\", \"Sales\"]]]",
-   "options": "Department"
-  },
-  {
-   "fieldname": "cfms_rev_location",
-   "fieldtype": "Link",
-   "label": "Location",
-   "options": "Location"
-  },
-  {
-   "fieldname": "cfms_rev_cost_center",
-   "fieldtype": "Link",
-   "label": "Cost Center",
-   "link_filters": "[[\"Cost Center\", \"name\", \"in\", [\"Commercial - CHSPL\", \"Non-Commercial - CHSPL\", \"Overhead - CHSPL\"]]]",
-   "options": "Cost Center"
-  },
-  {
-   "fieldname": "cfms_rev_product_line",
-   "fieldtype": "Link",
-   "label": "Product Line",
-   "link_filters": "[[\"Item Group\", \"parent_item_group\", \"=\", \"CFMS Product Line\"]]",
-   "options": "Item Group"
   }
  ],
  "links": [],
- "modified": "2025-10-29 11:04:51.752819",
+ "modified": "2025-10-29 14:27:21.964116",
  "modified_by": "Administrator",
  "module": "CFMS",
  "name": "CFMS Revenue",

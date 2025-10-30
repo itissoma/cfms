@@ -1,0 +1,130 @@
+/**
+ * CFMS Kiosk Mode - Navigation Lock
+ * ==================================
+ * 
+ * This script implements "chroot" mode for CFMS:
+ * - Hides ERPNext logo/navigation for non-admin users
+ * - Keeps users within CFMS dashboard ecosystem
+ * - Prevents accidental navigation to ERPNext Desk
+ * 
+ * Only System Managers can see full ERPNext interface
+ */
+
+frappe.ready(function() {
+    // Check if user is a System Manager (admin)
+    const isSystemManager = frappe.user_roles.includes('System Manager');
+    
+    if (!isSystemManager) {
+        console.log('CFMS Kiosk Mode: Activated for non-admin user');
+        
+        // Hide the ERPNext logo and home link
+        hideERPNextNavigation();
+        
+        // Hide additional navigation elements
+        hideTopNavbar();
+        
+        // Redirect if user tries to go to Desk
+        preventDeskAccess();
+        
+        // Add custom CFMS branding
+        addCFMSBranding();
+    } else {
+        console.log('CFMS Kiosk Mode: Skipped for System Manager');
+    }
+});
+
+function hideERPNextNavigation() {
+    // Hide the ERPNext logo at top-left
+    const style = document.createElement('style');
+    style.textContent = `
+        /* Hide ERPNext logo and home link */
+        .navbar-brand,
+        .navbar-home {
+            display: none !important;
+        }
+        
+        /* Hide the sidebar toggle for non-CFMS pages */
+        .toggle-sidebar {
+            display: none !important;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function hideTopNavbar() {
+    // Hide unnecessary top navbar items
+    const style = document.createElement('style');
+    style.textContent = `
+        /* Hide the search bar (can be optionally shown) */
+        /* .navbar-nav .nav-item .search-bar {
+            display: none !important;
+        } */
+        
+        /* Hide the awesome bar */
+        .awesomplete {
+            display: none !important;
+        }
+        
+        /* Hide "New" button in navbar */
+        /* .navbar-nav .nav-item [data-label="New"] {
+            display: none !important;
+        } */
+    `;
+    document.head.appendChild(style);
+}
+
+function preventDeskAccess() {
+    // If user navigates to /app (Desk), redirect to CFMS dashboard
+    if (window.location.pathname === '/app' || window.location.pathname === '/app/') {
+        console.log('CFMS Kiosk Mode: Redirecting from Desk to CFMS Dashboard');
+        window.location.href = '/cfms-dashboard';
+    }
+}
+
+function addCFMSBranding() {
+    // Add CFMS logo/text in place of ERPNext logo
+    const navbarBrand = document.querySelector('.navbar-brand');
+    if (navbarBrand) {
+        navbarBrand.innerHTML = `
+            <span style="color: #10b981; font-weight: bold; font-size: 18px;">
+                💰 CFMS
+            </span>
+        `;
+        navbarBrand.style.display = 'block';
+        navbarBrand.href = '/cfms-dashboard';
+    }
+}
+
+// Additional: Monitor navigation attempts
+window.addEventListener('beforeunload', function(e) {
+    // You can add logic here to warn users before navigating away
+    // if they have unsaved changes
+});
+
+// Freeze navigation to CFMS routes only
+frappe.router.on('change', () => {
+    const isSystemManager = frappe.user_roles.includes('System Manager');
+    const currentRoute = frappe.get_route();
+    
+    if (!isSystemManager) {
+        // Allow only CFMS routes
+        const allowedRoutes = [
+            'cfms-dashboard',
+            'Form/CFMS Project',
+            'Form/CFMS Expense', 
+            'Form/CFMS Revenue',
+            'List/CFMS Project',
+            'List/CFMS Expense',
+            'List/CFMS Revenue'
+        ];
+        
+        const isAllowedRoute = allowedRoutes.some(route => 
+            currentRoute.join('/').includes(route)
+        );
+        
+        if (!isAllowedRoute && currentRoute[0] !== 'cfms-dashboard') {
+            console.log('CFMS Kiosk Mode: Blocked navigation to', currentRoute);
+            frappe.set_route('cfms-dashboard');
+        }
+    }
+});

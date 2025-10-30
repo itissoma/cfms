@@ -1,0 +1,190 @@
+/**
+ * CFMS Sidebar Cleanup (FINAL VERSION)
+ * =====================================
+ * 
+ * This stylesheet hides unnecessary sidebar items:
+ * - KEEP: Attachments (for bills/invoices)
+ * - KEEP: Comments (useful for collaboration)
+ * - HIDE: Assigned To, Tags, Share, Follow
+ * 
+ * UPDATED: More specific selectors with higher priority
+ */
+
+/* ============================================================================
+   HIDE: Assigned To Section
+   ============================================================================ */
+.form-sidebar .form-sidebar-item.assignments,
+.form-sidebar .sidebar-label:contains("Assigned To"),
+.form-sidebar [data-fieldname="assign"],
+.form-sidebar .form-assign-to,
+.sidebar-section[data-section="assign"],
+.form-sidebar-item:has(.form-assign-to),
+.form-sidebar .sidebar-menu > div:first-child,
+.form-sidebar > div:first-child:has([class*="assign"]) {
+    display: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+}
+
+/* Hide by checking text content - Assigned To */
+.form-sidebar .sidebar-label {
+    display: block;
+}
+
+.form-sidebar .sidebar-label:first-child,
+.form-sidebar .form-sidebar-item:first-child {
+    display: none !important;
+}
+
+/* ============================================================================
+   HIDE: Tags Section
+   ============================================================================ */
+.form-sidebar .form-sidebar-item.tags,
+.form-sidebar .sidebar-label:contains("Tags"),
+.form-sidebar [data-fieldname="_user_tags"],
+.form-sidebar .form-tags,
+.sidebar-section[data-section="tags"],
+.tag-area,
+.form-sidebar-item:has(.form-tags),
+.form-sidebar .form-sidebar-item:nth-child(3) {
+    display: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+}
+
+/* ============================================================================
+   HIDE: Share Section
+   ============================================================================ */
+.form-sidebar .form-sidebar-item.share,
+.form-sidebar .sidebar-label:contains("Share"),
+.form-sidebar [data-fieldname="share"],
+.form-sidebar .form-shared,
+.sidebar-section[data-section="share"],
+.form-sidebar-item:has(.form-shared),
+.form-sidebar .form-sidebar-item:nth-child(4) {
+    display: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+}
+
+/* ============================================================================
+   HIDE: Follow Button/Section
+   ============================================================================ */
+.form-sidebar .sidebar-menu .btn-follow,
+.form-footer .btn-follow,
+.form-sidebar button:contains("Follow"),
+.sidebar-section[data-section="follow"] {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* ============================================================================
+   HIDE: Likes Section
+   ============================================================================ */
+.form-sidebar .sidebar-menu [data-fieldname="_liked_by"],
+.likes-section,
+.form-sidebar .form-sidebar-item:has([class*="like"]) {
+    display: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+}
+
+/* ============================================================================
+   KEEP & ENHANCE: Attachments Section
+   ============================================================================ */
+.form-sidebar .form-sidebar-item.attachments,
+.form-sidebar .sidebar-label:contains("Attachments"),
+.form-sidebar [data-fieldname="attach"],
+.form-sidebar .form-attachments {
+    display: block !important;
+    visibility: visible !important;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 12px;
+    background: #f9fafb;
+}
+
+/* Make attachment label prominent */
+.form-sidebar .form-attachments .sidebar-label,
+.form-sidebar .attachments .sidebar-label {
+    font-weight: 600;
+    color: #10b981;
+    margin-bottom: 8px;
+    display: block !important;
+}
+
+/* Style the file uploader */
+.file-uploader {
+    border: 2px dashed #10b981 !important;
+    background: #f0fdf4 !important;
+}
+
+.file-uploader:hover {
+    border-color: #059669 !important;
+    background: #d1fae5 !important;
+}
+
+/* ============================================================================
+   KEEP: Comments Section
+   ============================================================================ */
+.form-sidebar .form-sidebar-item.comments,
+.form-sidebar .sidebar-label:contains("Comments"),
+.form-sidebar [data-fieldname="comments"],
+.form-sidebar .comment-box {
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* ============================================================================
+   STRUCTURAL: Compact Sidebar
+   ============================================================================ */
+.form-sidebar {
+    max-width: 280px;
+}
+
+/* Force specific items to be hidden by position (nuclear option) */
+.form-sidebar > .form-sidebar-item:nth-of-type(1) {
+    /* Usually Assigned To */
+    display: none !important;
+}
+
+.form-sidebar > .form-sidebar-item:nth-of-type(3) {
+    /* Usually Tags */
+    display: none !important;
+}
+
+.form-sidebar > .form-sidebar-item:nth-of-type(4) {
+    /* Usually Share */
+    display: none !important;
+}
+
+/* ============================================================================
+   RESPONSIVE: Hide Sidebar on Mobile
+   ============================================================================ */
+@media (max-width: 768px) {
+    .form-sidebar {
+        display: none !important;
+    }
+}
+
+/* ============================================================================
+   DEBUGGING: Uncomment to see what's being hidden
+   ============================================================================ */
+/*
+.form-sidebar .form-sidebar-item {
+    border: 1px solid red !important;
+    margin: 2px !important;
+}
+
+.form-sidebar .form-sidebar-item::before {
+    content: attr(class);
+    display: block;
+    font-size: 10px;
+    color: red;
+}
+*/
