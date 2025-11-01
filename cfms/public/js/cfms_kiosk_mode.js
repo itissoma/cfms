@@ -1,34 +1,107 @@
 /**
- * CFMS Kiosk Mode - FINAL VERSION v2.2 (Corrected)
+ * CFMS Kiosk Mode - VERSION 3.0 (Phase 1.1)
  * 
- * SIDEBAR: Show Attachments, Tags only
- * MAIN PAGE: Keep Comments, Hide Activity section and New Email button
- * CONSOLE: Fixed infinite loop
+ * v3.0 Changes (Phase 1.1 - Landing Page):
+ * - TODO-001: Added landing page redirect logic
+ * - TODO-002: JavaScript-based redirect for /me and /app/home
+ * - Ensures CFMS Accountant always lands on /cfms-dashboard
+ * 
+ * Previous features (v2.2):
+ * - SIDEBAR: Show Attachments, Tags only
+ * - MAIN PAGE: Keep Comments, Hide Activity section and New Email button
+ * - CONSOLE: Fixed infinite loop
+ * - LOGO: Custom CFMS branding
  */
 
 (function() {
     'use strict';
     
-    console.log('🚀 CFMS Kiosk Mode v2.2 (Final) initializing...');
+    console.log('🚀 CFMS Kiosk Mode v3.0 (Phase 1.1) initializing...');
     
     // =====================================================
-    // 1. KIOSK MODE - Block ERPNext Desk Access
+    // 1. LANDING PAGE REDIRECT (NEW - Phase 1.1)
     // =====================================================
+    
+    /**
+     * TODO-001 & TODO-002: Landing Page Redirect
+     * Ensures non-admin users land on /cfms-dashboard by default
+     * 
+     * IMPORTANT: cfms-dashboard is a Web Page, not a DocType
+     * Must use window.location.href (not frappe.set_route)
+     * to avoid adding /app/ prefix
+     */
+    function redirectToDefaultPage() {
+        const is_system_manager = frappe.user_roles && frappe.user_roles.includes('System Manager');
+        
+        if (!is_system_manager) {
+            const current_route = frappe.get_route();
+            const route_str = current_route.join('/');
+            const path = window.location.pathname;
+            
+            // List of pages that should redirect to dashboard
+            const redirect_routes = [
+                'me',           // My Account page
+                'app/home',     // ERPNext home
+                'app',          // ERPNext Desk
+                ''              // Root/empty route
+            ];
+            
+            // Check if current route needs redirect
+            if (redirect_routes.includes(route_str) || 
+                path === '/me' || 
+                path === '/app' || 
+                path === '/app/home') {
+                
+                console.log(`🔄 CFMS Kiosk: Redirecting from '${route_str}' to /cfms-dashboard`);
+                // Use direct URL navigation for Web Page (not frappe.set_route)
+                window.location.href = '/cfms-dashboard';
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    // Run redirect on page load
+    $(document).ready(function() {
+        setTimeout(redirectToDefaultPage, 100);
+    });
+    
+    // =====================================================
+    // 2. ROUTE MONITORING (Enhanced from v2.2)
+    // =====================================================
+    
+    /**
+     * Monitor all route changes and block unauthorized access
+     * Enhanced to include landing page redirects
+     */
     frappe.router.on('change', function() {
         const current_route = frappe.get_route();
         const route_str = current_route.join('/');
         const is_system_manager = frappe.user_roles.includes('System Manager');
         
-        if (route_str === 'app' && !is_system_manager) {
-            console.log('🚫 CFMS Kiosk: Blocked /app access');
-            frappe.set_route('cfms-dashboard');
-            return false;
+        if (!is_system_manager) {
+            // Block ERPNext Desk access
+            if (route_str === 'app' || route_str.startsWith('app/')) {
+                console.log('🚫 CFMS Kiosk: Blocked /app access');
+                // Use direct URL navigation for Web Page
+                window.location.href = '/cfms-dashboard';
+                return false;
+            }
+            
+            // Redirect My Account page
+            if (route_str === 'me') {
+                console.log('🚫 CFMS Kiosk: Blocked /me access');
+                // Use direct URL navigation for Web Page
+                window.location.href = '/cfms-dashboard';
+                return false;
+            }
         }
     });
     
     // =====================================================
-    // 2. LOGO CUSTOMIZATION
+    // 3. LOGO CUSTOMIZATION (from v2.2)
     // =====================================================
+    
     let logo_already_customized = false;
     
     function customize_navbar_logo() {
@@ -37,6 +110,7 @@
         const is_system_manager = frappe.user_roles.includes('System Manager');
         
         if (!is_system_manager) {
+            // Hide ERPNext logos
             const erpnext_logo_selectors = [
                 '.navbar-brand img',
                 '.navbar-home img',
@@ -49,6 +123,7 @@
                 });
             });
             
+            // Add CFMS logo
             const navbar_brand = document.querySelector('.navbar-brand') || document.querySelector('.navbar-home');
             
             if (navbar_brand && !navbar_brand.querySelector('.cfms-custom-logo')) {
@@ -69,7 +144,7 @@
     });
     
     // =====================================================
-    // 3. SIDEBAR CLEANUP
+    // 4. SIDEBAR CLEANUP (from v2.2)
     // =====================================================
     
     let cleanup_in_progress = false;
@@ -98,223 +173,122 @@
             elements.forEach(element => {
                 if (element.style.display !== 'none') {
                     element.style.display = 'none';
-                    element.style.visibility = 'hidden';
-                    element.style.height = '0';
-                    element.style.overflow = 'hidden';
-                    element.classList.add('cfms-hidden');
                     hidden_count++;
                 }
             });
         });
         
         if (hidden_count > 0) {
-            console.log(`✅ Hid ${hidden_count} sidebar items`);
+            console.log(`✅ Hidden ${hidden_count} sidebar items`);
         }
         
         cleanup_in_progress = false;
     }
     
-    // =====================================================
-    // 4. PAGE CLEANUP - Hide Activity Section & Email Button
-    //    KEEP Comments Section Visible
-    // =====================================================
+    // Initial cleanup
+    $(document).ready(function() {
+        setTimeout(hide_sidebar_items, 800);
+    });
     
-    function hide_page_elements() {
-        console.log('🧹 Cleaning page (Activity & Email)...');
-        
-        let hidden_count = 0;
-        
-        // STRATEGY: Find "Activity" heading and hide only that section
-        // DO NOT touch "Comments" section
-        
-        // Method 1: Find Activity heading and hide its siblings
-        const headings = document.querySelectorAll('h3, h4, .section-head');
-        headings.forEach(heading => {
-            const headingText = heading.textContent.trim();
-            
-            // Only hide Activity section, NOT Comments
-            if (headingText === 'Activity') {
-                heading.style.display = 'none';
-                heading.classList.add('cfms-hidden');
-                
-                // Hide the content after the Activity heading
-                // Stop when we hit another heading (like Comments or next section)
-                let nextElement = heading.nextElementSibling;
-                while (nextElement) {
-                    // Check if this is another section heading
-                    const isHeading = nextElement.tagName === 'H3' || 
-                                     nextElement.tagName === 'H4' ||
-                                     nextElement.classList.contains('section-head');
-                    
-                    // Stop if we hit Comments or another major section
-                    if (isHeading) {
-                        const nextText = nextElement.textContent.trim();
-                        if (nextText === 'Comments' || nextText === 'Comment') {
-                            break;
-                        }
-                    }
-                    
-                    // Hide this element (it's part of Activity section)
-                    nextElement.style.display = 'none';
-                    nextElement.classList.add('cfms-hidden');
-                    
-                    nextElement = nextElement.nextElementSibling;
-                    
-                    // Safety: stop after 10 elements to avoid hiding too much
-                    if (!nextElement || hidden_count > 10) break;
-                }
-                
-                console.log('🗑️ Hid: Activity section');
-                hidden_count++;
-            }
-        });
-        
-        // Method 2: Hide specific Activity containers (backup)
-        const activity_containers = document.querySelectorAll('.form-footer');
-        activity_containers.forEach(container => {
-            // Only hide if it doesn't contain Comments
-            const hasComments = container.querySelector('.comment-box') || 
-                               container.textContent.includes('Type a reply');
-            
-            if (!hasComments && container.style.display !== 'none') {
-                container.style.display = 'none';
-                container.classList.add('cfms-hidden');
-                hidden_count++;
-            }
-        });
-        
-        // Method 3: Hide "+ New Email" button specifically
-        const allButtons = document.querySelectorAll('button, a, .btn');
-        allButtons.forEach(btn => {
-            const text = btn.textContent.trim();
-            if (text.includes('New Email') || text.includes('New E-Mail')) {
-                btn.style.display = 'none';
-                btn.style.visibility = 'hidden';
-                btn.classList.add('cfms-hidden');
-                console.log('🗑️ Hid: New Email button');
-                hidden_count++;
-            }
-        });
-        
-        if (hidden_count > 0) {
-            console.log(`✅ Hid ${hidden_count} page elements`);
-        }
-    }
+    // Watch for sidebar changes
+    const sidebar_observer = new MutationObserver(function(mutations) {
+        hide_sidebar_items();
+    });
     
-    // Run both cleanups when form loads
-    frappe.ui.form.on('*', {
-        refresh: function(frm) {
-            console.log('📋 Form refreshed');
-            
-            // Sidebar cleanup
-            setTimeout(hide_sidebar_items, 200);
-            setTimeout(hide_sidebar_items, 600);
-            
-            // Page cleanup (Activity & Email)
-            setTimeout(hide_page_elements, 400);
-            setTimeout(hide_page_elements, 900);
-            setTimeout(hide_page_elements, 1500);
-        }
+    $(document).ready(function() {
+        setTimeout(function() {
+            const sidebar = document.querySelector('.form-sidebar');
+            if (sidebar) {
+                sidebar_observer.observe(sidebar, {
+                    childList: true,
+                    subtree: true
+                });
+                console.log('👁️ Sidebar observer started');
+            }
+        }, 1000);
     });
     
     // =====================================================
-    // 5. MUTATION OBSERVER - Watch for Dynamic Changes
+    // 5. MAIN PAGE CLEANUP (from v2.2)
     // =====================================================
     
-    let observer = null;
+    let main_cleanup_in_progress = false;
     
-    function setup_observers() {
-        const sidebar = document.querySelector('.form-sidebar');
-        
-        if (!sidebar) {
-            console.log('⏳ Sidebar not found, will retry...');
+    function hide_main_page_items() {
+        if (main_cleanup_in_progress) {
             return;
         }
         
-        if (observer) {
-            observer.disconnect();
+        main_cleanup_in_progress = true;
+        
+        // HIDE these main page elements
+        const main_items_to_hide = [
+            '.timeline-item',                    // Activity section in main area
+            '.comment-box .btn.btn-default',     // New Email button
+            '.form-footer .text-muted'           // Metadata in footer
+        ];
+        
+        let hidden_main = 0;
+        
+        main_items_to_hide.forEach(selector => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(element => {
+                const text = element.textContent.trim().toLowerCase();
+                
+                // Only hide "Activity" timeline items, not Comments
+                if (selector === '.timeline-item' && !text.includes('comment')) {
+                    if (element.style.display !== 'none') {
+                        element.style.display = 'none';
+                        hidden_main++;
+                    }
+                }
+                // Hide "New Email" button
+                else if (selector === '.comment-box .btn.btn-default' && text.includes('new email')) {
+                    if (element.style.display !== 'none') {
+                        element.style.display = 'none';
+                        hidden_main++;
+                    }
+                }
+                // Hide metadata
+                else if (selector === '.form-footer .text-muted') {
+                    if (element.style.display !== 'none') {
+                        element.style.display = 'none';
+                        hidden_main++;
+                    }
+                }
+            });
+        });
+        
+        if (hidden_main > 0) {
+            console.log(`✅ Hidden ${hidden_main} main page items`);
         }
         
-        console.log('👁️ Setting up observers...');
-        
-        let mutation_timeout;
-        
-        observer = new MutationObserver(function(mutations) {
-            const significant_changes = mutations.some(mutation => {
-                return mutation.addedNodes.length > 0 && 
-                       Array.from(mutation.addedNodes).some(node => 
-                           node.nodeType === 1 && 
-                           node.classList && 
-                           (node.classList.contains('sidebar-menu') ||
-                            node.classList.contains('form-footer'))
-                       );
-            });
-            
-            if (significant_changes && !cleanup_in_progress) {
-                clearTimeout(mutation_timeout);
-                mutation_timeout = setTimeout(function() {
-                    console.log('🔄 New content detected');
-                    hide_sidebar_items();
-                    hide_page_elements();
-                }, 300);
-            }
-        });
-        
-        observer.observe(sidebar, {
-            childList: true,
-            subtree: true
-        });
-        
-        console.log('✅ Observers active');
+        main_cleanup_in_progress = false;
     }
     
+    // Initial main cleanup
     $(document).ready(function() {
-        setTimeout(setup_observers, 1000);
-        setTimeout(hide_sidebar_items, 1500);
-        setTimeout(hide_page_elements, 1500);
+        setTimeout(hide_main_page_items, 1000);
     });
     
-    frappe.router.on('change', function() {
-        setTimeout(setup_observers, 1000);
-        setTimeout(hide_sidebar_items, 1200);
-        setTimeout(hide_page_elements, 1200);
+    // Watch for main page changes
+    const main_observer = new MutationObserver(function(mutations) {
+        hide_main_page_items();
     });
     
-    // =====================================================
-    // 6. CSS INJECTION - For Extra Insurance
-    // =====================================================
+    $(document).ready(function() {
+        setTimeout(function() {
+            const layout_main = document.querySelector('.layout-main');
+            if (layout_main) {
+                main_observer.observe(layout_main, {
+                    childList: true,
+                    subtree: true
+                });
+                console.log('👁️ Main page observer started');
+            }
+        }, 1200);
+    });
     
-    const style = document.createElement('style');
-    style.textContent = `
-        /* CFMS Sidebar Cleanup */
-        .sidebar-menu.form-assignments,
-        .sidebar-menu.form-shared,
-        .sidebar-menu.form-sidebar-stats,
-        .sidebar-menu.followed-by-section,
-        .sidebar-menu.text-muted,
-        .cfms-hidden {
-            display: none !important;
-            visibility: hidden !important;
-            height: 0 !important;
-            overflow: hidden !important;
-        }
-        
-        /* Keep sidebar items visible */
-        .sidebar-menu.form-attachments,
-        .sidebar-menu.form-tags {
-            display: block !important;
-        }
-        
-        /* Keep Comments section visible - DO NOT HIDE */
-        .comment-box,
-        .new-comment {
-            display: block !important;
-            visibility: visible !important;
-        }
-    `;
-    document.head.appendChild(style);
-    console.log('✅ CSS rules injected');
-    
-    console.log('✅ CFMS Kiosk Mode v2.2 loaded');
+    console.log('✅ CFMS Kiosk Mode v3.0 (Phase 1.1) loaded successfully');
     
 })();

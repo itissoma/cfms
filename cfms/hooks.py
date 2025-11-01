@@ -28,11 +28,11 @@ app_license = "mit"
 # app_include_css = "/assets/cfms/css/cfms.css"
 # app_include_js = "/assets/cfms/js/cfms.js"
 app_include_js = [
-    "/assets/cfms/js/cfms_kiosk_mode.js"
+	"/assets/cfms/js/cfms_kiosk_mode.js"
 ]
 
 app_include_css = [
-    "/assets/cfms/css/cfms_sidebar_cleanup.css"
+	"/assets/cfms/css/cfms_sidebar_cleanup.css"
 ]
 
 # include js, css files in header of web template
@@ -66,10 +66,12 @@ app_include_css = [
 # application home page (will override Website Settings)
 # home_page = "login"
 
-# website user home page (by Role)
-# role_home_page = {
-# 	"Role": "home_page"
-# }
+# Phase 1.1 - Role-based home page (TODO-001)
+# This is the CORRECT way to set default landing pages by role
+# No hooks needed, pure configuration!
+role_home_page = {
+	"CFMS Accountant": "/cfms-dashboard"
+}
 
 # Generators
 # ----------
@@ -248,4 +250,3 @@ app_include_css = [
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
-
